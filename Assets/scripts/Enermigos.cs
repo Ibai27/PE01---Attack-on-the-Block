@@ -20,4 +20,5 @@ public class MovimientoEnemigo : MonoBehaviour
     }
 
 
+    // El rebote se maneja automáticamente gracias al PhysicsMaterial2D
 }

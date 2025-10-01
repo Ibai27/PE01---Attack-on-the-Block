@@ -6,12 +6,6 @@ public class MovimientoJugador : MonoBehaviour
     public float velocidad = 5f;
     private Vector3 posicionInicial;
 
-    [Header("Invencibilidad")]
-    public bool invencible = false;           // Si el jugador es invencible
-    public float tiempoInvencibilidadPowerUp = 5f; // Duración del power-up
-    private SpriteRenderer sr;                // Para efecto visual
-
-
     void Start()
     {
         // Ocultar el cursor
@@ -25,9 +19,6 @@ public class MovimientoJugador : MonoBehaviour
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
-
-        sr = GetComponent<SpriteRenderer>();
-
     }
 
     void Update()
@@ -50,38 +41,9 @@ public class MovimientoJugador : MonoBehaviour
         transform.position = Vector3.MoveTowards(transform.position, posicionRaton, velocidad * Time.deltaTime);
 
     }
-    public void ActivarInvencibilidad(float duracion)
-{
-    if (!invencible)
-        StartCoroutine(InvencibilidadTemporal(duracion));
-}
-
-private System.Collections.IEnumerator InvencibilidadTemporal(float duracion)
-{
-    invencible = true;
-
-    // Parpadeo visual mientras es invencible
-    Color colorOriginal = sr.color;
-    float tiempoParpadeo = 0.2f;
-    float tiempoAcumulado = 0f;
-
-    while (tiempoAcumulado < duracion)
-    {
-        sr.color = Color.yellow;
-        yield return new WaitForSeconds(tiempoParpadeo);
-        sr.color = colorOriginal;
-        yield return new WaitForSeconds(tiempoParpadeo);
-
-        tiempoAcumulado += tiempoParpadeo * 2;
-    }
-
-    invencible = false;
-    sr.color = colorOriginal;
-}
-
 
     // Método público para restaurar posición
-    public void ResetearPosicion()
+   public void ResetearPosicion()
     {
         // Restaurar posición inicial y activar jugador
         transform.position = posicionInicial;
@@ -98,18 +60,13 @@ private System.Collections.IEnumerator InvencibilidadTemporal(float duracion)
     {
         if (colision.gameObject.CompareTag("Enemigo"))
         {
-            if (!invencible)
-            {
-                // Sonido de golpe
-                AudioManager.instancia.ReproducirSonido(AudioManager.instancia.sonidoGolpeJugador);
+            Debug.Log("Colisión con enemigo -> GAME OVER");
 
-
-                // Llamar a GameManager para quitar vida
-                GameManager gm = Object.FindFirstObjectByType<GameManager>();
-                if (gm != null)
-                    gm.QuitarVida();
-            }
+            // Llamar al GameManager para activar el panel
+            GameManager gm = Object.FindFirstObjectByType<GameManager>();
+            if (gm != null)
+                gm.FinDelJuego();
         }
-    }
 
+    }
 }
